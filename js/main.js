@@ -1,883 +1,1212 @@
-// Data Storage with localStorage
-let rooms = JSON.parse(localStorage.getItem('rooms')) || [
-    {
-        id: 1,
-        title: "Modern Bachelor in Cosmo City",
-        type: "bachelor",
-        price: 2500,
-        bedrooms: 1,
-        bathrooms: 1,
-        description: "Beautiful modern bachelor apartment with all amenities. Perfect for singles.",
-        available: true,
-        landlordId: 2,
-        image: "🏠"
-    },
-    {
-        id: 2,
-        title: "Spacious Family House",
-        type: "house",
-        price: 4500,
-        bedrooms: 2,
-        bathrooms: 2,
-        description: "Large house with open-plan living area, modern kitchen, and secure parking.",
-        available: true,
-        landlordId: 2,
-        image: "🏠"
-    },
-    {
-        id: 3,
-        title: "Charming Cottage with Garden",
-        type: "cottage",
-        price: 5500,
-        bedrooms: 2,
-        bathrooms: 1,
-        description: "Lovely cottage with garden and cozy atmosphere.",
-        available: true,
-        landlordId: 2,
-        image: "🏠"
+// Application State
+const AppState = {
+    currentUser: null,
+    favorites: [],
+    properties: [
+        {
+            id: 1,
+            title: "Modern Bachelor in Cosmo City",
+            price: 3500,
+            location: "Cosmo City, Johannesburg",
+            beds: 1,
+            baths: 1,
+            size: 45,
+            type: "bachelor",
+            image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            badge: "Featured",
+            description: "A modern bachelor apartment perfect for singles or students. Features include a fully equipped kitchenette, built-in wardrobes, and secure parking.",
+            amenities: ["WiFi", "Parking", "Security", "Laundry"]
+        },
+        {
+            id: 2,
+            title: "Spacious Family House",
+            price: 5800,
+            location: "Cosmo City, Johannesburg",
+            beds: 3,
+            baths: 2,
+            size: 120,
+            type: "house",
+            image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            badge: "Popular",
+            description: "Perfect for families, this spacious house features a large backyard, modern kitchen, and plenty of storage space.",
+            amenities: ["Garden", "Parking", "Security", "Pet-friendly"]
+        },
+        {
+            id: 3,
+            title: "Cozy Garden Cottage",
+            price: 4200,
+            location: "Cosmo City, Johannesburg",
+            beds: 2,
+            baths: 1,
+            size: 65,
+            type: "cottage",
+            image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            description: "A charming garden cottage with a private entrance and beautiful garden views. Perfect for couples or small families.",
+            amenities: ["Garden", "Private Entrance", "Parking"]
+        },
+        {
+            id: 4,
+            title: "Luxury Apartment",
+            price: 7500,
+            location: "Cosmo City, Johannesburg",
+            beds: 2,
+            baths: 2,
+            size: 85,
+            type: "apartment",
+            image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            badge: "New",
+            description: "Modern luxury apartment with high-end finishes, balcony, and access to communal facilities including a pool and gym.",
+            amenities: ["Pool", "Gym", "Parking", "Security", "Balcony"]
+        },
+        {
+            id: 5,
+            title: "Student Accommodation",
+            price: 2800,
+            location: "Cosmo City, Johannesburg",
+            beds: 1,
+            baths: 1,
+            size: 35,
+            type: "bachelor",
+            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            description: "Affordable student accommodation with study desk and easy access to public transport.",
+            amenities: ["WiFi", "Study Desk", "Security"]
+        },
+        {
+            id: 6,
+            title: "Family Townhouse",
+            price: 6200,
+            location: "Cosmo City, Johannesburg",
+            beds: 3,
+            baths: 2,
+            size: 110,
+            type: "house",
+            image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+            description: "Modern townhouse in a secure complex, perfect for families with children.",
+            amenities: ["Security", "Parking", "Playground", "Pet-friendly"]
+        }
+    ],
+    blogs: [
+        {
+            id: 1,
+            title: "10 Tips for First-Time Renters",
+            excerpt: "Essential advice for those renting their first property...",
+            content: "Renting your first property can be both exciting and overwhelming. Here are 10 essential tips to help you navigate the process: 1. Understand your budget and stick to it. 2. Check the neighborhood at different times of day. 3. Read the lease agreement carefully. 4. Document the property's condition before moving in. 5. Get renters insurance. 6. Know your rights as a tenant. 7. Communicate openly with your landlord. 8. Understand maintenance responsibilities. 9. Be a good neighbor. 10. Plan for moving costs beyond just the rent.",
+            date: "2023-11-15",
+            author: "Sarah Johnson",
+            image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        },
+        {
+            id: 2,
+            title: "How to Maintain Good Tenant-Landlord Relations",
+            excerpt: "Building positive relationships for a better rental experience...",
+            content: "A positive relationship with your landlord can make your rental experience much more pleasant. Here are some tips: Communicate promptly about issues, pay rent on time, respect the property, give proper notice before moving out, and be reasonable with requests. Remember that landlords appreciate tenants who treat their property with care and respect.",
+            date: "2023-11-10",
+            author: "Michael Brown",
+            image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        },
+        {
+            id: 3,
+            title: "Understanding Your Lease Agreement",
+            excerpt: "Key terms and conditions every tenant should know...",
+            content: "Your lease agreement is a legally binding contract. Key elements to understand include: lease duration, rent amount and due date, security deposit details, maintenance responsibilities, pet policies, subletting rules, and termination conditions. Don't hesitate to ask for clarification on any points you don't understand before signing.",
+            date: "2023-11-05",
+            author: "Lisa Williams",
+            image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        }
+    ],
+    faqs: [
+        {
+            question: "How do I apply for a property?",
+            answer: "To apply for a property, click on the 'Book Now' button on any property listing. You'll need to create an account and fill out an application form with your personal details, employment information, and references."
+        },
+        {
+            question: "What documents do I need to rent?",
+            answer: "Typically, you'll need: a valid ID, proof of income (3 months bank statements or payslips), proof of residence, and references from previous landlords or employers."
+        },
+        {
+            question: "How long does the application process take?",
+            answer: "Once you submit your application with all required documents, the approval process usually takes 2-5 business days. We'll contact you as soon as your application is reviewed."
+        },
+        {
+            question: "Can I view a property before applying?",
+            answer: "Absolutely! We encourage all potential tenants to view properties before applying. You can schedule a viewing by clicking 'View Details' on any property and selecting your preferred viewing time."
+        },
+        {
+            question: "What is the deposit amount?",
+            answer: "The deposit is typically equal to one month's rent. This amount is refundable at the end of your lease, subject to property inspection and no damages."
+        },
+        {
+            question: "Are pets allowed?",
+            answer: "Pet policies vary by property. Some landlords allow pets with an additional deposit, while others don't allow pets at all. Check the property details or contact us for specific pet policies."
+        }
+    ]
+};
+
+// Navigation System
+function navigateTo(page) {
+    document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    
+    const pageElement = document.getElementById(page + 'Page');
+    if (pageElement) {
+        pageElement.classList.add('active');
+        document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+        
+        const breadcrumb = document.getElementById('breadcrumb');
+        breadcrumb.innerHTML = `<span>${page.charAt(0).toUpperCase() + page.slice(1)}</span>`;
+        
+        if (window.innerWidth <= 1024) {
+            document.getElementById('sidebar').classList.remove('active');
+        }
+        
+        window.scrollTo(0, 0);
     }
-];
-
-let bookings = JSON.parse(localStorage.getItem('bookings')) || [
-    {
-        id: 1,
-        roomId: 1,
-        roomTitle: "Modern Bachelor in Cosmo City",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+27 12 345 6789",
-        checkin: "2025-10-15",
-        checkout: "2026-01-15",
-        notes: "Looking forward to moving in!",
-        status: 'approved',
-        date: new Date().toLocaleDateString(),
-        tenantId: 1
-    }
-];
-
-let notifications = JSON.parse(localStorage.getItem('notifications')) || [
-    {
-        id: 1,
-        message: "Your booking request for 'Charming Cottage with Garden' has been submitted successfully!",
-        date: new Date().toLocaleString(),
-        type: 'info',
-        userId: 1
-    }
-];
-
-let users = JSON.parse(localStorage.getItem('users')) || [
-    {
-        id: 1,
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+27 12 345 6789",
-        role: "tenant",
-        password: "password123"
-    },
-    {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane.smith@example.com",
-        phone: "+27 98 765 4321",
-        role: "landlord",
-        password: "password123"
-    },
-    {
-        id: 3,
-        name: "Admin User",
-        email: "admin@example.com",
-        phone: "+27 11 222 3333",
-        role: "superadmin",
-        password: "admin123"
-    }
-];
-
-let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
-
-let currentUserId = parseInt(localStorage.getItem('currentUserId')) || null;
-let currentRoomForBooking = null;
-
-// Save Data to localStorage
-function saveData() {
-    localStorage.setItem('rooms', JSON.stringify(rooms));
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-    localStorage.setItem('currentUserId', currentUserId);
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    // Protect dashboard pages
-    const protectedPages = ['tenant.html', 'landlord.html', 'superadmin.html'];
-    const currentPage = window.location.pathname.split('/').pop();
-    if (protectedPages.includes(currentPage) && !currentUserId) {
-        window.location.href = 'login.html';
+// Render Property Card
+function renderPropertyCard(property) {
+    const isFavorite = AppState.favorites.includes(property.id);
+    return `
+        <div class="property-card">
+            <div class="property-image">
+                <img src="${property.image}" alt="${property.title}">
+                ${property.badge ? `<div class="property-badge">${property.badge}</div>` : ''}
+                <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${property.id}">
+                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+            </div>
+            <div class="property-info">
+                <div class="property-price">R${property.price.toLocaleString()}<span>/month</span></div>
+                <h3 class="property-title">${property.title}</h3>
+                <div class="property-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    ${property.location}
+                </div>
+                <div class="property-features">
+                    <span><i class="fas fa-bed"></i> ${property.beds} Bed${property.beds > 1 ? 's' : ''}</span>
+                    <span><i class="fas fa-bath"></i> ${property.baths} Bath${property.baths > 1 ? 's' : ''}</span>
+                    <span><i class="fas fa-ruler-combined"></i> ${property.size}m²</span>
+                </div>
+                <div class="property-actions">
+                    <button class="btn btn-outline view-details-btn" data-id="${property.id}">View Details</button>
+                    <button class="btn btn-primary book-now-btn" data-id="${property.id}">Book Now</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Render Property Detail View
+function renderPropertyDetail(propertyId) {
+    const property = AppState.properties.find(p => p.id === propertyId);
+    if (!property) return;
+    
+    const detailHTML = `
+        <section>
+            <div class="section-header">
+                <button class="btn btn-secondary" id="backToBrowse"><i class="fas fa-arrow-left"></i> Back to Properties</button>
+                <h2>${property.title}</h2>
+                <p>${property.location}</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <div>
+                    <div class="property-image" style="height: 400px;">
+                        <img src="${property.image}" alt="${property.title}">
+                        ${property.badge ? `<div class="property-badge">${property.badge}</div>` : ''}
+                        <button class="favorite-btn ${AppState.favorites.includes(property.id) ? 'active' : ''}" data-id="${property.id}">
+                            <i class="${AppState.favorites.includes(property.id) ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="property-price" style="font-size: 2.5rem;">R${property.price.toLocaleString()}<span style="font-size: 1.25rem;">/month</span></div>
+                    
+                    <div class="property-features" style="margin: 1.5rem 0;">
+                        <span><i class="fas fa-bed"></i> ${property.beds} Bed${property.beds > 1 ? 's' : ''}</span>
+                        <span><i class="fas fa-bath"></i> ${property.baths} Bath${property.baths > 1 ? 's' : ''}</span>
+                        <span><i class="fas fa-ruler-combined"></i> ${property.size}m²</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3>Description</h3>
+                        <p>${property.description}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3>Amenities</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${property.amenities.map(amenity => `
+                                <span style="background: var(--background); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem;">
+                                    <i class="fas fa-check"></i> ${amenity}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="property-actions">
+                        <button class="btn btn-primary book-now-btn" data-id="${property.id}" style="flex: 1;">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `;
+    
+    const browsePage = document.getElementById('browsePage');
+    browsePage.innerHTML = detailHTML;
+    
+    // Add event listeners
+    document.getElementById('backToBrowse').addEventListener('click', () => {
+        renderBrowsePage();
+    });
+    
+    document.querySelector('.favorite-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(property.id);
+    });
+    
+    document.querySelector('.book-now-btn').addEventListener('click', () => {
+        handleBookNow(property.id);
+    });
+}
+
+// Render Browse Page
+function renderBrowsePage() {
+    const browsePage = document.getElementById('browsePage');
+    browsePage.innerHTML = `
+        <section>
+            <div class="section-header">
+                <h2>Browse All Properties</h2>
+                <p>Find your perfect rental home</p>
+            </div>
+            <div class="properties-grid" id="allProperties"></div>
+        </section>
+    `;
+    
+    const allGrid = document.getElementById('allProperties');
+    allGrid.innerHTML = AppState.properties.map(renderPropertyCard).join('');
+    attachPropertyListeners();
+}
+
+// Render Blog Detail View
+function renderBlogDetail(blogId) {
+    const blog = AppState.blogs.find(b => b.id === blogId);
+    if (!blog) return;
+    
+    const blogHTML = `
+        <section>
+            <div class="section-header">
+                <button class="btn btn-secondary" id="backToBlog"><i class="fas fa-arrow-left"></i> Back to Blog</button>
+                <h2>${blog.title}</h2>
+                <div class="blog-meta" style="justify-content: center;">
+                    <span><i class="fas fa-calendar"></i> ${blog.date}</span>
+                    <span><i class="fas fa-user"></i> ${blog.author}</span>
+                </div>
+            </div>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="blog-image" style="height: 400px; margin-bottom: 2rem;">
+                    <img src="${blog.image}" alt="${blog.title}">
+                </div>
+                
+                <div style="font-size: 1.125rem; line-height: 1.8;">
+                    ${blog.content.split('\n').map(paragraph => `<p>${paragraph}</p>`).join('')}
+                </div>
+            </div>
+        </section>
+    `;
+    
+    const blogPage = document.getElementById('blogPage');
+    blogPage.innerHTML = blogHTML;
+    
+    document.getElementById('backToBlog').addEventListener('click', () => {
+        renderBlogPage();
+    });
+}
+
+// Render Blog Page
+function renderBlogPage() {
+    const blogPage = document.getElementById('blogPage');
+    blogPage.innerHTML = `
+        <section>
+            <div class="section-header">
+                <h2>Latest Articles</h2>
+                <p>Tips, guides, and insights for renters and landlords</p>
+            </div>
+            <div class="blog-grid" id="blogGrid"></div>
+        </section>
+    `;
+    
+    renderBlogs();
+}
+
+// Render Properties
+function renderProperties() {
+    const featuredGrid = document.getElementById('featuredProperties');
+    const allGrid = document.getElementById('allProperties');
+    
+    if (featuredGrid) {
+        featuredGrid.innerHTML = AppState.properties.slice(0, 3).map(renderPropertyCard).join('');
+    }
+    
+    if (allGrid) {
+        allGrid.innerHTML = AppState.properties.map(renderPropertyCard).join('');
+    }
+    
+    attachPropertyListeners();
+}
+
+// Render Favorites
+function renderFavorites() {
+    const favoritesGrid = document.getElementById('favoritesGrid');
+    const emptyFavorites = document.getElementById('emptyFavorites');
+    
+    const favoriteProperties = AppState.properties.filter(p => AppState.favorites.includes(p.id));
+    
+    if (favoriteProperties.length === 0) {
+        favoritesGrid.style.display = 'none';
+        emptyFavorites.style.display = 'block';
+    } else {
+        favoritesGrid.style.display = 'grid';
+        emptyFavorites.style.display = 'none';
+        favoritesGrid.innerHTML = favoriteProperties.map(renderPropertyCard).join('');
+        attachPropertyListeners();
+    }
+    
+    updateFavoritesCount();
+}
+
+// Update Favorites Count
+function updateFavoritesCount() {
+    const badge = document.getElementById('favoritesCount');
+    badge.textContent = AppState.favorites.length;
+}
+
+// Toggle Favorite
+function toggleFavorite(propertyId) {
+    const index = AppState.favorites.indexOf(propertyId);
+    if (index > -1) {
+        AppState.favorites.splice(index, 1);
+    } else {
+        AppState.favorites.push(propertyId);
+    }
+    renderProperties();
+    renderFavorites();
+    updateFavoritesCount();
+}
+
+// Attach Property Event Listeners
+function attachPropertyListeners() {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(btn.getAttribute('data-id'));
+            toggleFavorite(id);
+        });
+    });
+    
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(btn.getAttribute('data-id'));
+            renderPropertyDetail(id);
+            navigateTo('browse');
+        });
+    });
+    
+    document.querySelectorAll('.book-now-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(btn.getAttribute('data-id'));
+            handleBookNow(id);
+        });
+    });
+}
+
+// Handle Book Now
+function handleBookNow(propertyId) {
+    if (!AppState.currentUser) {
+        alert('Please log in to book a property.');
+        navigateTo('login');
         return;
     }
-
-    // Initialize pages
-if (currentPage === 'index.html' || currentPage === '') {
-    setupNavbarToggle();
-    setupContactForm();
-} else if (currentPage === 'signup.html') {
-    setupSignupForm();
-    setupNavbarToggle();
-} else if (currentPage === 'login.html') {
-    setupLoginForm();
-    setupNavbarToggle();
-} else if (currentPage === 'tenant.html') {
-        const user = users.find(u => u.id === currentUserId);
-        if (user && user.role !== 'tenant') {
-            showToast('Unauthorized access', 'error');
-            window.location.href = getDashboardUrl(user.role);
-            return;
-        }
-        displayRooms(rooms);
-        updateBookingsList();
-        updateNotificationsList();
-        setupEventListeners();
-        document.getElementById('profileName').value = user.name;
-        document.getElementById('profileEmail').value = user.email;
-        document.getElementById('profilePhone').value = user.phone;
-    } else if (currentPage === 'landlord.html') {
-        const user = users.find(u => u.id === currentUserId);
-        if (user && user.role !== 'landlord') {
-            showToast('Unauthorized access', 'error');
-            window.location.href = getDashboardUrl(user.role);
-            return;
-        }
-        updateLandlordRoomsList();
-        updateRequestsList();
-        updateAnalytics();
-        setupEventListeners();
-    } else if (currentPage === 'superadmin.html') {
-        const user = users.find(u => u.id === currentUserId);
-        if (user && user.role !== 'superadmin') {
-            showToast('Unauthorized access', 'error');
-            window.location.href = getDashboardUrl(user.role);
-            return;
-        }
-        updateUsersList();
-        updateAllRoomsList();
-        updateSystemAnalytics();
-        setupEventListeners();
-    }
-});
-
-// Get Dashboard URL based on role
-function getDashboardUrl(role) {
-    switch (role) {
-        case 'tenant': return 'tenant.html';
-        case 'landlord': return 'landlord.html';
-        case 'superadmin': return 'superadmin.html';
-        default: return 'index.html';
+    
+    const property = AppState.properties.find(p => p.id === propertyId);
+    if (property) {
+        alert(`Booking request submitted for ${property.title}. Our team will contact you shortly to complete the process.`);
     }
 }
 
-// Setup Navbar Toggle
-function setupNavbarToggle() {
-    const navbarToggle = document.querySelector('.navbar-toggle');
-    const userMenu = document.querySelector('.user-menu');
-    if (navbarToggle && userMenu) {
-        navbarToggle.addEventListener('click', () => {
-            userMenu.classList.toggle('active');
+// Render Blog Posts
+function renderBlogs() {
+    const blogGrid = document.getElementById('blogGrid');
+    if (blogGrid) {
+        blogGrid.innerHTML = AppState.blogs.map(blog => `
+            <div class="blog-card">
+                <div class="blog-image">
+                    <img src="${blog.image}" alt="${blog.title}">
+                </div>
+                <div class="blog-content">
+                    <div class="blog-meta">
+                        <span><i class="fas fa-calendar"></i> ${blog.date}</span>
+                        <span><i class="fas fa-user"></i> ${blog.author}</span>
+                    </div>
+                    <h3 class="blog-title">${blog.title}</h3>
+                    <p class="blog-excerpt">${blog.excerpt}</p>
+                    <button class="btn btn-outline read-more-btn" data-id="${blog.id}">Read More</button>
+                </div>
+            </div>
+        `).join('');
+        
+        document.querySelectorAll('.read-more-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                renderBlogDetail(id);
+                navigateTo('blog');
+            });
         });
     }
 }
 
-// Setup Login Form
-function setupLoginForm() {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLoginSubmit);
+// Render FAQs
+function renderFAQs() {
+    const faqList = document.getElementById('faqList');
+    if (faqList) {
+        faqList.innerHTML = AppState.faqs.map((faq, index) => `
+            <div class="faq-item" data-index="${index}">
+                <div class="faq-question">
+                    <span>${faq.question}</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    ${faq.answer}
+                </div>
+            </div>
+        `).join('');
+        
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
     }
 }
 
-// Handle Login Submission
-function handleLoginSubmit(e) {
+// Search Functionality
+function performSearch() {
+    const location = document.getElementById('searchLocation').value.toLowerCase();
+    const type = document.getElementById('searchType').value;
+    const priceRange = document.getElementById('searchPrice').value;
+    
+    let filtered = AppState.properties;
+    
+    if (location) {
+        filtered = filtered.filter(p => p.location.toLowerCase().includes(location));
+    }
+    
+    if (type) {
+        filtered = filtered.filter(p => p.type === type);
+    }
+    
+    if (priceRange) {
+        const [min, max] = priceRange.split('-').map(s => s.replace('+', ''));
+        filtered = filtered.filter(p => {
+            if (max) {
+                return p.price >= parseInt(min) && p.price <= parseInt(max);
+            } else {
+                return p.price >= parseInt(min);
+            }
+        });
+    }
+    
+    const allGrid = document.getElementById('allProperties');
+    if (filtered.length > 0) {
+        allGrid.innerHTML = filtered.map(renderPropertyCard).join('');
+        attachPropertyListeners();
+    } else {
+        allGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem;"><h3>No properties found</h3><p style="color: var(--text-secondary);">Try adjusting your search criteria</p></div>';
+    }
+    
+    navigateTo('browse');
+}
+
+// Profile Tabs Functionality
+function setupProfileTabs() {
+    document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const tabName = tab.getAttribute('data-tab');
+            const profileContent = document.getElementById('profileTabInfo');
+            
+            if (tabName === 'info') {
+                profileContent.innerHTML = `
+                    <h3>Personal Information</h3>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="profileFormName" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="profileFormEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="profileFormPhone" placeholder="+27 12 345 6789">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                `;
+                
+                // Re-attach form handler
+                document.getElementById('profileForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (AppState.currentUser) {
+                        AppState.currentUser.name = document.getElementById('profileFormName').value;
+                        AppState.currentUser.email = document.getElementById('profileFormEmail').value;
+                        AppState.currentUser.phone = document.getElementById('profileFormPhone').value;
+                        updateUserInterface();
+                        alert('Profile updated successfully!');
+                    }
+                });
+                
+                // Populate form with current user data
+                if (AppState.currentUser) {
+                    document.getElementById('profileFormName').value = AppState.currentUser.name;
+                    document.getElementById('profileFormEmail').value = AppState.currentUser.email;
+                    document.getElementById('profileFormPhone').value = AppState.currentUser.phone || '';
+                }
+            } else if (tabName === 'properties') {
+                const favoriteProperties = AppState.properties.filter(p => AppState.favorites.includes(p.id));
+                
+                if (favoriteProperties.length > 0) {
+                    profileContent.innerHTML = `
+                        <h3>My Favorite Properties</h3>
+                        <div class="properties-grid">
+                            ${favoriteProperties.map(renderPropertyCard).join('')}
+                        </div>
+                    `;
+                    attachPropertyListeners();
+                } else {
+                    profileContent.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-heart" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                            <h3>No favorite properties yet</h3>
+                            <p style="color: var(--text-secondary);">Properties you add to your favorites will appear here.</p>
+                            <a class="btn btn-primary" data-page="browse" style="margin-top: 1rem;">Browse Properties</a>
+                        </div>
+                    `;
+                }
+            } else if (tabName === 'settings') {
+                profileContent.innerHTML = `
+                    <h3>Account Settings</h3>
+                    <div style="margin-bottom: 2rem;">
+                        <h4>Notification Preferences</h4>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" checked> Email notifications
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" checked> SMS notifications
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Privacy</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Manage your privacy settings</p>
+                        <button class="btn btn-outline">Privacy Settings</button>
+                    </div>
+                `;
+            }
+        });
+    });
+}
+
+// Login Form Handler
+document.getElementById('loginForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (user) {
-        currentUserId = user.id;
-        saveData();
-        showToast('Login successful!', 'success');
-        window.location.href = getDashboardUrl(user.role);
-    } else {
-        showToast('Invalid email or password', 'error');
-    }
-}
-
-// Logout
-function logout() {
-    currentUserId = null;
-    saveData();
-    showToast('Logged out successfully', 'success');
-    window.location.href = 'index.html';
-}
-
-// Setup Event Listeners
-function setupEventListeners() {
-    if (document.getElementById('bookingForm')) {
-        document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
-    }
-    if (document.getElementById('addRoomForm')) {
-        document.getElementById('addRoomForm').addEventListener('submit', handleAddRoomSubmit);
-    }
-    if (document.getElementById('profileForm')) {
-        document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
-    }
-    if (document.getElementById('addUserForm')) {
-        document.getElementById('addUserForm').addEventListener('submit', handleAddUserSubmit);
-    }
-    if (document.querySelector('.filters')) {
-        document.querySelectorAll('.filters select').forEach(select => {
-            select.addEventListener('change', applyFilters);
-        });
-    }
-    if (document.getElementById('bookingCheckin')) {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('bookingCheckin').min = today;
-        document.getElementById('bookingCheckout').min = today;
-    }
-}
-
-// Display Rooms
-function displayRooms(roomsToDisplay) {
-    const grid = document.getElementById('roomsGrid');
-    if (!grid) return;
-
-    if (roomsToDisplay.length === 0) {
-        grid.innerHTML = '<div class="no-results">No rooms found matching your criteria.</div>';
-        return;
-    }
-
-    grid.innerHTML = roomsToDisplay.map(room => `
-        <div class="room-card" onclick="openBookingModal(${room.id})">
-            <div class="room-image">${room.image}</div>
-            <div class="room-info">
-                <span class="room-type">${room.type.toUpperCase()}</span>
-                <div class="room-title">${room.title}</div>
-                <div class="room-price">R${room.price.toLocaleString()}/month</div>
-                <div class="room-details">
-                    <span>🛏️ ${room.bedrooms} Bed</span>
-                    <span>🚿 ${room.bathrooms} Bath</span>
-                </div>
-                <div class="room-description">${room.description}</div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: auto;">
-                    <span>📅</span>
-                    <span>Book Now</span>
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Apply Filters
-function applyFilters() {
-    const type = document.getElementById('filterType')?.value;
-    const priceRange = document.getElementById('filterPrice')?.value;
-    const bedrooms = document.getElementById('filterBedrooms')?.value;
-    const bathrooms = document.getElementById('filterBathrooms')?.value;
-
-    let filtered = rooms.filter(room => {
-        if (type && room.type !== type) return false;
-        if (priceRange) {
-            const [min, max] = priceRange.split('-').map(Number);
-            if (room.price < min || room.price > max) return false;
-        }
-        if (bedrooms) {
-            const beds = parseInt(bedrooms);
-            if (beds === 3 && room.bedrooms < 3) return false;
-            if (beds !== 3 && room.bedrooms !== beds) return false;
-        }
-        if (bathrooms) {
-            const baths = parseInt(bathrooms);
-            if (baths === 3 && room.bathrooms < 3) return false;
-            if (baths !== 3 && room.bathrooms !== baths) return false;
-        }
-        return true;
-    });
-
-    displayRooms(filtered);
-}
-
-// Open Booking Modal
-function openBookingModal(roomId) {
-    if (!currentUserId) {
-        showToast('Please log in to book a room', 'error');
-        window.location.href = 'login.html';
-        return;
-    }
-    currentRoomForBooking = rooms.find(r => r.id === roomId);
-    const modal = document.getElementById('bookingModal');
-    const modalInfo = document.getElementById('modalRoomInfo');
     
-    if (!modal || !modalInfo) return;
-
-    modalInfo.innerHTML = `
-        <div style="background: var(--forge-light); padding: 15px; border-radius: 10px;">
-            <h3>${currentRoomForBooking.title}</h3>
-            <p style="color: var(--forge-primary); font-size: 20px; font-weight: bold; margin-top: 10px;">
-                R${currentRoomForBooking.price.toLocaleString()}/month
-            </p>
-            <p style="margin-top: 10px; color: var(--forge-dark);">${currentRoomForBooking.description}</p>
-        </div>
-    `;
-    
-    const user = users.find(u => u.id === currentUserId);
-    document.getElementById('bookingName').value = user.name;
-    document.getElementById('bookingEmail').value = user.email;
-    document.getElementById('bookingPhone').value = user.phone;
-    
-    modal.classList.add('active');
-}
-
-// Close Booking Modal
-function closeBookingModal() {
-    const modal = document.getElementById('bookingModal');
-    if (modal) {
-        modal.classList.remove('active');
-        document.getElementById('bookingForm')?.reset();
-    }
-}
-
-// Handle Booking Form Submission
-function handleBookingSubmit(e) {
-    e.preventDefault();
-    
-    const booking = {
-        id: bookings.length + 1,
-        roomId: currentRoomForBooking.id,
-        roomTitle: currentRoomForBooking.title,
-        name: document.getElementById('bookingName').value,
-        email: document.getElementById('bookingEmail').value,
-        phone: document.getElementById('bookingPhone').value,
-        checkin: document.getElementById('bookingCheckin').value,
-        checkout: document.getElementById('bookingCheckout').value,
-        notes: document.getElementById('bookingNotes').value,
-        status: 'pending',
-        date: new Date().toLocaleDateString(),
-        tenantId: currentUserId
+    AppState.currentUser = {
+        name: email.split('@')[0],
+        email: email
     };
     
-    bookings.push(booking);
-    
-    notifications.push({
-        id: notifications.length + 1,
-        message: `Your booking request for "${currentRoomForBooking.title}" has been submitted successfully!`,
-        date: new Date().toLocaleString(),
-        type: 'info',
-        userId: currentUserId
-    });
-    
-    saveData();
-    showToast('Booking request submitted successfully!', 'success');
-    closeBookingModal();
-    updateBookingsList();
-    updateNotificationsList();
-}
+    updateUserInterface();
+    navigateTo('home');
+});
 
-// Show Toast Notification
-function showToast(message, type = 'info') {
-    const toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) return;
-
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-        <span>${message}</span>
-    `;
-    
-    toastContainer.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.remove();
-    }, 5000);
-}
-
-// Switch Tenant Dashboard Tab
-function switchTab(tab) {
-    document.querySelectorAll('#tenantDashboard .dashboard-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    document.getElementById('myBookings')?.classList.add('hidden');
-    document.getElementById('notifications')?.classList.add('hidden');
-    document.getElementById('profile')?.classList.add('hidden');
-    document.getElementById('browseRooms')?.classList.add('hidden');
-    document.getElementById(tab)?.classList.remove('hidden');
-}
-
-// Switch Landlord Dashboard Tab
-function switchLandlordTab(tab) {
-    document.querySelectorAll('#landlordDashboard .dashboard-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    document.getElementById('myRooms')?.classList.add('hidden');
-    document.getElementById('bookingRequests')?.classList.add('hidden');
-    document.getElementById('addRoom')?.classList.add('hidden');
-    document.getElementById('analytics')?.classList.add('hidden');
-    document.getElementById(tab)?.classList.remove('hidden');
-    
-    if (tab === 'analytics') {
-        updateAnalytics();
-    }
-}
-
-// Switch Superadmin Dashboard Tab
-function switchSuperadminTab(tab) {
-    document.querySelectorAll('#superadminDashboard .dashboard-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    document.getElementById('manageUsers')?.classList.add('hidden');
-    document.getElementById('manageRooms')?.classList.add('hidden');
-    document.getElementById('systemAnalytics')?.classList.add('hidden');
-    document.getElementById(tab)?.classList.remove('hidden');
-    
-    if (tab === 'systemAnalytics') {
-        updateSystemAnalytics();
-    }
-}
-
-// Update Bookings List
-function updateBookingsList() {
-    const list = document.getElementById('bookingsList');
-    if (!list) return;
-
-    const userBookings = bookings.filter(b => b.tenantId === currentUserId);
-    
-    if (userBookings.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">No bookings yet. Browse rooms and make your first booking!</p>';
-        return;
-    }
-    
-    list.innerHTML = userBookings.map(booking => `
-        <div class="booking-item">
-            <h4>${booking.roomTitle}</h4>
-            <p><strong>Dates:</strong> ${booking.checkin} to ${booking.checkout}</p>
-            <p><strong>Submitted:</strong> ${booking.date}</p>
-            <span class="booking-status status-${booking.status}">${booking.status.toUpperCase()}</span>
-        </div>
-    `).join('');
-}
-
-// Update Notifications List
-function updateNotificationsList() {
-    const list = document.getElementById('notificationsList');
-    if (!list) return;
-
-    const userNotifications = notifications.filter(n => n.userId === currentUserId);
-    
-    if (userNotifications.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">No notifications yet.</p>';
-        return;
-    }
-    
-    list.innerHTML = userNotifications.map(notif => `
-        <div class="notification">
-            <p>${notif.message}</p>
-            <small style="color: var(--forge-text-light);">${notif.date}</small>
-        </div>
-    `).join('');
-}
-
-// Update Landlord Rooms List
-function updateLandlordRoomsList() {
-    const list = document.getElementById('landlordRoomsList');
-    if (!list) return;
-
-    const landlordRooms = rooms.filter(r => r.landlordId === currentUserId);
-    
-    if (landlordRooms.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">You haven\'t listed any rooms yet.</p>';
-        return;
-    }
-    
-    list.innerHTML = landlordRooms.map(room => `
-        <div class="booking-item">
-            <h4>${room.title}</h4>
-            <p><strong>Type:</strong> ${room.type} | <strong>Price:</strong> R${room.price.toLocaleString()}</p>
-            <p><strong>Bedrooms:</strong> ${room.bedrooms} | <strong>Bathrooms:</strong> ${room.bathrooms}</p>
-            <p>${room.description}</p>
-            <div style="margin-top: 10px;">
-                <button class="btn btn-secondary" onclick="editRoom(${room.id})">Edit</button>
-                <button class="btn btn-danger" onclick="deleteRoom(${room.id})" style="margin-left: 10px;">Delete</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Update Requests List
-function updateRequestsList() {
-    const list = document.getElementById('requestsList');
-    if (!list) return;
-
-    const landlordRooms = rooms.filter(r => r.landlordId === currentUserId);
-    const roomIds = landlordRooms.map(r => r.id);
-    const relevantBookings = bookings.filter(b => roomIds.includes(b.roomId));
-    
-    if (relevantBookings.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">No booking requests yet.</p>';
-        return;
-    }
-    
-    list.innerHTML = relevantBookings.map(booking => `
-        <div class="booking-item">
-            <h4>${booking.roomTitle}</h4>
-            <p><strong>Tenant:</strong> ${booking.name} (${booking.email})</p>
-            <p><strong>Phone:</strong> ${booking.phone}</p>
-            <p><strong>Dates:</strong> ${booking.checkin} to ${booking.checkout}</p>
-            <p><strong>Notes:</strong> ${booking.notes || 'None'}</p>
-            <span class="booking-status status-${booking.status}">${booking.status.toUpperCase()}</span>
-            ${booking.status === 'pending' ? `
-                <div style="margin-top: 10px;">
-                    <button class="btn btn-success" onclick="approveBooking(${booking.id})">Approve</button>
-                    <button class="btn btn-danger" onclick="rejectBooking(${booking.id})" style="margin-left: 10px;">Reject</button>
-                </div>
-            ` : ''}
-        </div>
-    `).join('');
-}
-
-// Update Analytics
-function updateAnalytics() {
-    const landlordRooms = rooms.filter(r => r.landlordId === currentUserId);
-    const roomIds = landlordRooms.map(r => r.id);
-    const pendingRequests = bookings.filter(b => roomIds.includes(b.roomId) && b.status === 'pending').length;
-    const activeBookings = bookings.filter(b => roomIds.includes(b.roomId) && b.status === 'approved').length;
-    const monthlyRevenue = landlordRooms.reduce((sum, room) => sum + room.price, 0);
-    
-    if (document.getElementById('totalListings')) {
-        document.getElementById('totalListings').textContent = landlordRooms.length;
-        document.getElementById('pendingRequests').textContent = pendingRequests;
-        document.getElementById('activeBookings').textContent = activeBookings;
-        document.getElementById('monthlyRevenue').textContent = monthlyRevenue.toLocaleString();
-    }
-}
-
-// Update Users List
-function updateUsersList() {
-    const list = document.getElementById('usersList');
-    if (!list) return;
-
-    if (users.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">No users registered.</p>';
-        return;
-    }
-
-    list.innerHTML = users.map(user => `
-        <div class="booking-item">
-            <h4>${user.name}</h4>
-            <p><strong>Email:</strong> ${user.email}</p>
-            <p><strong>Phone:</strong> ${user.phone}</p>
-            <p><strong>Role:</strong> ${user.role}</p>
-            <div style="margin-top: 10px;">
-                <button class="btn btn-secondary" onclick="editUser(${user.id})">Edit</button>
-                <button class="btn btn-danger" onclick="deleteUser(${user.id})" style="margin-left: 10px;">Delete</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Update All Rooms List
-function updateAllRoomsList() {
-    const list = document.getElementById('allRoomsList');
-    if (!list) return;
-
-    if (rooms.length === 0) {
-        list.innerHTML = '<p style="color: var(--forge-dark);">No rooms listed.</p>';
-        return;
-    }
-
-    list.innerHTML = rooms.map(room => `
-        <div class="booking-item">
-            <h4>${room.title}</h4>
-            <p><strong>Type:</strong> ${room.type} | <strong>Price:</strong> R${room.price.toLocaleString()}</p>
-            <p><strong>Bedrooms:</strong> ${room.bedrooms} | <strong>Bathrooms:</strong> ${room.bathrooms}</p>
-            <p><strong>Landlord:</strong> ${users.find(u => u.id === room.landlordId)?.name || 'Unknown'}</p>
-            <p>${room.description}</p>
-            <div style="margin-top: 10px;">
-                <button class="btn btn-secondary" onclick="editRoom(${room.id})">Edit</button>
-                <button class="btn btn-danger" onclick="deleteRoom(${room.id})" style="margin-left: 10px;">Delete</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Update System Analytics
-function updateSystemAnalytics() {
-    const totalRevenue = bookings
-        .filter(b => b.status === 'approved')
-        .reduce((sum, b) => {
-            const room = rooms.find(r => r.id === b.roomId);
-            return sum + (room ? room.price : 0);
-        }, 0);
-
-    if (document.getElementById('totalUsers')) {
-        document.getElementById('totalUsers').textContent = users.length;
-        document.getElementById('totalRooms').textContent = rooms.length;
-        document.getElementById('totalBookings').textContent = bookings.length;
-        document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString();
-    }
-}
-
-// Approve Booking
-function approveBooking(bookingId) {
-    const booking = bookings.find(b => b.id === bookingId);
-    booking.status = 'approved';
-    
-    notifications.push({
-        id: notifications.length + 1,
-        message: `Great news! Your booking for "${booking.roomTitle}" has been APPROVED! 🎉`,
-        date: new Date().toLocaleString(),
-        type: 'success',
-        userId: booking.tenantId
-    });
-    
-    saveData();
-    updateRequestsList();
-    showToast('Booking approved successfully!', 'success');
-}
-
-// Reject Booking
-function rejectBooking(bookingId) {
-    const booking = bookings.find(b => b.id === bookingId);
-    booking.status = 'rejected';
-    
-    notifications.push({
-        id: notifications.length + 1,
-        message: `Unfortunately, your booking for "${booking.roomTitle}" has been declined.`,
-        date: new Date().toLocaleString(),
-        type: 'error',
-        userId: booking.tenantId
-    });
-    
-    saveData();
-    updateRequestsList();
-    showToast('Booking rejected.', 'info');
-}
-
-// Add Room Form Handler
-function handleAddRoomSubmit(e) {
-    e.preventDefault();
-    
-    const newRoom = {
-        id: rooms.length + 1,
-        title: document.getElementById('newRoomTitle').value,
-        type: document.getElementById('newRoomType').value,
-        price: parseInt(document.getElementById('newRoomPrice').value),
-        bedrooms: parseInt(document.getElementById('newRoomBedrooms').value),
-        bathrooms: parseInt(document.getElementById('newRoomBathrooms').value),
-        description: document.getElementById('newRoomDescription').value,
-        image: document.getElementById('newRoomImage').value || '🏠',
-        available: true,
-        landlordId: currentUserId
-    };
-    
-    rooms.push(newRoom);
-    
-    saveData();
-    showToast('Room added successfully!', 'success');
-    document.getElementById('addRoomForm').reset();
-    updateLandlordRoomsList();
-    updateAnalytics();
-    updateAllRoomsList();
-}
-
-// Edit Room
-function editRoom(roomId) {
-    showToast('Edit functionality would be implemented here', 'info');
-}
-
-// Delete Room
-function deleteRoom(roomId) {
-    if (confirm('Are you sure you want to delete this room?')) {
-        rooms = rooms.filter(r => r.id !== roomId);
-        saveData();
-        showToast('Room deleted successfully', 'success');
-        updateLandlordRoomsList();
-        updateAllRoomsList();
-        updateAnalytics();
-        updateSystemAnalytics();
-        displayRooms(rooms);
-    }
-}
-
-// Handle Profile Update
-function handleProfileUpdate(e) {
-    e.preventDefault();
-    const user = users.find(u => u.id === currentUserId);
-    user.name = document.getElementById('profileName').value;
-    user.email = document.getElementById('profileEmail').value;
-    user.phone = document.getElementById('profilePhone').value;
-    
-    saveData();
-    showToast('Profile updated successfully!', 'success');
-}
-
-// Handle Add User Form Submission
-function handleAddUserSubmit(e) {
-    e.preventDefault();
-    
-    const newUser = {
-        id: users.length + 1,
-        name: document.getElementById('newUserName').value,
-        email: document.getElementById('newUserEmail').value,
-        phone: document.getElementById('newUserPhone').value,
-        role: document.getElementById('newUserRole').value,
-        password: document.getElementById('newUserPassword').value
-    };
-    
-    users.push(newUser);
-    
-    saveData();
-    showToast('User added successfully!', 'success');
-    document.getElementById('addUserForm').reset();
-    updateUsersList();
-    updateSystemAnalytics();
-}
-
-// Edit User
-function editUser(userId) {
-    showToast('Edit user functionality would be implemented here', 'info');
-}
-
-// Delete User
-function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        users = users.filter(u => u.id !== userId);
-        bookings = bookings.filter(b => b.tenantId !== userId);
-        rooms = rooms.filter(r => r.landlordId !== userId);
-        notifications = notifications.filter(n => n.userId !== userId);
-        
-        saveData();
-        showToast('User deleted successfully', 'success');
-        updateUsersList();
-        updateAllRoomsList();
-        updateSystemAnalytics();
-        updateLandlordRoomsList();
-        updateBookingsList();
-        updateNotificationsList();
-    }
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('bookingModal');
-    if (modal && event.target === modal) {
-        closeBookingModal();
-    }
-}
-
-// Setup Signup Form
-function setupSignupForm() {
-    const signupForm = document.getElementById('signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', handleSignupSubmit);
-    }
-}
-
-// Handle Signup Submission
-function handleSignupSubmit(e) {
+// Signup Form Handler
+document.getElementById('signupForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('signupName').value;
     const email = document.getElementById('signupEmail').value;
-    const phone = document.getElementById('signupPhone').value;
-    const role = document.getElementById('signupRole').value;
-    const password = document.getElementById('signupPassword').value;
-
-    // Check if email already exists
-    if (users.some(u => u.email === email)) {
-        showToast('Email already registered. Please use a different email.', 'error');
-        return;
-    }
-
-    // Validate password length
-    if (password.length < 8) {
-        showToast('Password must be at least 8 characters long.', 'error');
-        return;
-    }
-
-    const newUser = {
-        id: users.length + 1,
-        name,
-        email,
-        phone,
-        role,
-        password
+    
+    AppState.currentUser = {
+        name: name,
+        email: email,
+        phone: document.getElementById('signupPhone').value
     };
+    
+    updateUserInterface();
+    navigateTo('home');
+});
 
-    users.push(newUser);
-    saveData();
-    showToast('Account created successfully! Please log in.', 'success');
-    document.getElementById('signupForm').reset();
-    setTimeout(() => {
-        window.location.href = 'login.html';
-    }, 2000);
-}
-
-// Remove the 'contacts' array from the top (no longer needed for storage)
-
-// In saveData(), remove the contacts line (if present)
-
-// Updated Setup Contact Form and Handler
-function setupContactForm() {
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', handleContactSubmit);
-    }
-}
-
-// Handle Contact Form Submission - Send to WhatsApp
-function handleContactSubmit(e) {
+// Profile Form Handler
+document.getElementById('profileForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    
-    // Validate form fields
-    const name = document.getElementById('contactName').value.trim();
-    const email = document.getElementById('contactEmail').value.trim();
-    const phone = document.getElementById('contactPhone').value.trim();
-    const subject = document.getElementById('contactSubject').value.trim();
-    const message = document.getElementById('contactMessage').value.trim();
-    
-    if (!name || !email || !phone || !subject || !message) {
-        showToast('Please fill in all fields.', 'error');
-        return;
+    if (AppState.currentUser) {
+        AppState.currentUser.name = document.getElementById('profileFormName').value;
+        AppState.currentUser.email = document.getElementById('profileFormEmail').value;
+        AppState.currentUser.phone = document.getElementById('profileFormPhone').value;
+        updateUserInterface();
+        alert('Profile updated successfully!');
     }
+});
+
+// Contact Form Handler
+document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const alertDiv = document.getElementById('contactAlert');
+    alertDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Message sent successfully! We\'ll get back to you soon.</div>';
+    e.target.reset();
+    setTimeout(() => {
+        alertDiv.innerHTML = '';
+    }, 5000);
+});
+
+// Update User Interface
+function updateUserInterface() {
+    const userName = document.getElementById('userName');
+    const userStatus = document.getElementById('userStatus');
+    const userActions = document.getElementById('userActions');
+    const loginLink = document.getElementById('loginLink');
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
     
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showToast('Please enter a valid email address.', 'error');
-        return;
+    if (AppState.currentUser) {
+        userName.textContent = AppState.currentUser.name;
+        userStatus.textContent = 'Logged in';
+        userActions.innerHTML = '<button class="btn btn-secondary" id="logoutBtn">Log Out</button>';
+        
+        if (profileName) profileName.textContent = AppState.currentUser.name;
+        if (profileEmail) profileEmail.textContent = AppState.currentUser.email;
+        
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            AppState.currentUser = null;
+            updateUserInterface();
+            navigateTo('home');
+        });
+        
+        // Update profile form if it exists
+        if (document.getElementById('profileFormName')) {
+            document.getElementById('profileFormName').value = AppState.currentUser.name;
+            document.getElementById('profileFormEmail').value = AppState.currentUser.email;
+            document.getElementById('profileFormPhone').value = AppState.currentUser.phone || '';
+        }
+    } else {
+        userName.textContent = 'Guest User';
+        userStatus.textContent = 'Not logged in';
+        userActions.innerHTML = '<a class="btn btn-primary" data-page="login">Log In</a><a class="btn btn-secondary" data-page="signup">Sign Up</a>';
+        
+        if (profileName) profileName.textContent = 'Guest User';
+        if (profileEmail) profileEmail.textContent = 'Not logged in';
+        
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo(link.getAttribute('data-page'));
+            });
+        });
     }
-    
-    // WhatsApp support number (replace with your actual number, e.g., +27123456789)
-    const whatsappNumber = '27123456789'; // International format without '+'
-    
-    // Construct the pre-filled message
-    const whatsappMessage = `*Cosmo City Rentals Inquiry*\n\n` +
-                           `*Name:* ${name}\n` +
-                           `*Email:* ${email}\n` +
-                           `*Phone:* ${phone}\n` +
-                           `*Subject:* ${subject}\n\n` +
-                           `*Message:*\n${message}\n\n` +
-                           `---\n*Sent via Cosmo City Rentals Website*`;
-    
-    // Encode the message for URL
-    const encodedMessage = encodeURIComponent(whatsappMessage);
-    
-    // WhatsApp URL
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-    
-    // Open WhatsApp in a new tab/window
-    window.open(whatsappUrl, '_blank');
-    
-    // Show success toast and reset form
-    showToast('Opening WhatsApp... Your message is ready to send!', 'success');
-    document.getElementById('contactForm').reset();
 }
+
+// Mobile Menu Toggle
+document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('active');
+});
+
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('active');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menuToggle');
+    
+    if (window.innerWidth <= 1024) {
+        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    }
+});
+
+// Navigation Click Handlers
+document.querySelectorAll('[data-page]').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        navigateTo(page);
+    });
+});
+
+// Search Button
+document.getElementById('searchBtn').addEventListener('click', performSearch);
+
+// Enter key on search fields
+['searchLocation', 'searchType', 'searchPrice'].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+        element.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+});
+
+// Initialize Application
+function initApp() {
+    renderProperties();
+    renderFavorites();
+    renderBlogs();
+    renderFAQs();
+    updateUserInterface();
+    updateFavoritesCount();
+    setupProfileTabs();
+}
+
+// Run on page load
+window.addEventListener('DOMContentLoaded', initApp);
+
+// Extended Application State
+        AppState.extendedProperties = AppState.properties.map(prop => ({
+            ...prop,
+            description: `This beautiful ${prop.type} in ${prop.location} offers ${prop.beds} bedroom${prop.beds > 1 ? 's' : ''} and ${prop.baths} bathroom${prop.baths > 1 ? 's' : ''}. With ${prop.size} square meters of living space, it's perfect for ${prop.type === 'bachelor' ? 'students or young professionals' : prop.type === 'apartment' ? 'couples or small families' : 'families'}. The property features modern finishes and is located in a safe, convenient neighborhood with easy access to public transport, shopping centers, and schools.`,
+            amenities: [
+                'WiFi Ready',
+                'Secure Parking',
+                '24/7 Security',
+                'Water Included',
+                'Prepaid Electricity',
+                'Garden',
+                'Braai Area',
+                'Pet Friendly'
+            ].slice(0, Math.floor(Math.random() * 4) + 4), // Random 4-7 amenities
+            images: [
+                prop.image,
+                'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+            ]
+        }));
+        
+        AppState.extendedBlogs = AppState.blogs.map(blog => ({
+            ...blog,
+            content: `
+                <p>${blog.excerpt}</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <h3>Key Points to Consider</h3>
+                <ul>
+                    <li>Always read the lease agreement thoroughly</li>
+                    <li>Document the property condition before moving in</li>
+                    <li>Understand your rights and responsibilities as a tenant</li>
+                    <li>Communicate openly with your landlord about any issues</li>
+                </ul>
+                <p>By following these guidelines, you can ensure a positive rental experience and build a good relationship with your landlord.</p>
+            `
+        }));
+        
+        AppState.userProperties = [
+            {
+                id: 101,
+                title: "My Cosmo City Apartment",
+                price: 3500,
+                status: "Rented",
+                tenant: "John Smith",
+                image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+            }
+        ];
+
+        // Modal Management
+        function openPropertyModal(propertyId) {
+            const property = AppState.extendedProperties.find(p => p.id === propertyId);
+            if (!property) return;
+            
+            document.getElementById('modalPropertyTitle').textContent = property.title;
+            document.getElementById('modalPropertyPrice').textContent = `R${property.price.toLocaleString()}/month`;
+            document.getElementById('modalPropertyLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${property.location}`;
+            document.getElementById('modalPropertyDescription').textContent = property.description;
+            document.getElementById('modalBookingPrice').textContent = `R${property.price.toLocaleString()}/month`;
+            
+            // Set main image
+            document.getElementById('modalMainImage').src = property.images[0];
+            
+            // Set thumbnails
+            const thumbs = document.querySelectorAll('.gallery-thumb img');
+            property.images.slice(1).forEach((img, index) => {
+                if (thumbs[index]) {
+                    thumbs[index].src = img;
+                    thumbs[index].parentElement.onclick = () => {
+                        document.getElementById('modalMainImage').src = img;
+                    };
+                }
+            });
+            
+            // Update features
+            const featuresHTML = `
+                <span><i class="fas fa-bed"></i> ${property.beds} Bed${property.beds > 1 ? 's' : ''}</span>
+                <span><i class="fas fa-bath"></i> ${property.baths} Bath${property.baths > 1 ? 's' : ''}</span>
+                <span><i class="fas fa-ruler-combined"></i> ${property.size}m²</span>
+                <span><i class="fas fa-home"></i> ${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</span>
+            `;
+            document.getElementById('modalPropertyFeatures').innerHTML = featuresHTML;
+            
+            // Update amenities
+            const amenitiesHTML = property.amenities.map(amenity => 
+                `<div class="amenity-item"><i class="fas fa-check"></i> ${amenity}</div>`
+            ).join('');
+            document.getElementById('modalPropertyAmenities').innerHTML = amenitiesHTML;
+            
+            // Show modal
+            document.getElementById('propertyModal').style.display = 'block';
+        }
+        
+        function openBlogModal(blogId) {
+            const blog = AppState.extendedBlogs.find(b => b.id === blogId);
+            if (!blog) return;
+            
+            document.getElementById('modalBlogTitle').textContent = blog.title;
+            document.getElementById('modalBlogDate').textContent = blog.date;
+            document.getElementById('modalBlogAuthor').textContent = blog.author;
+            document.getElementById('modalBlogImage').src = blog.image;
+            document.getElementById('modalBlogContent').innerHTML = blog.content;
+            
+            document.getElementById('blogModal').style.display = 'block';
+        }
+        
+        function closeModals() {
+            document.getElementById('propertyModal').style.display = 'none';
+            document.getElementById('blogModal').style.display = 'none';
+        }
+        
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 4000);
+        }
+        
+        // Enhanced Property Card with click handlers
+        function renderPropertyCard(property) {
+            const isFavorite = AppState.favorites.includes(property.id);
+            return `
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="${property.image}" alt="${property.title}">
+                        ${property.badge ? `<div class="property-badge">${property.badge}</div>` : ''}
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${property.id}">
+                            <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="property-info">
+                        <div class="property-price">R${property.price.toLocaleString()}<span>/month</span></div>
+                        <h3 class="property-title">${property.title}</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${property.location}
+                        </div>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> ${property.beds} Bed${property.beds > 1 ? 's' : ''}</span>
+                            <span><i class="fas fa-bath"></i> ${property.baths} Bath${property.baths > 1 ? 's' : ''}</span>
+                            <span><i class="fas fa-ruler-combined"></i> ${property.size}m²</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline view-details-btn" data-id="${property.id}">View Details</button>
+                            <button class="btn btn-primary book-now-btn" data-id="${property.id}">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Enhanced Blog Card
+        function renderBlogCard(blog) {
+            return `
+                <div class="blog-card">
+                    <div class="blog-image">
+                        <img src="${blog.image}" alt="${blog.title}">
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span><i class="fas fa-calendar"></i> ${blog.date}</span>
+                            <span><i class="fas fa-user"></i> ${blog.author}</span>
+                        </div>
+                        <h3 class="blog-title">${blog.title}</h3>
+                        <p class="blog-excerpt">${blog.excerpt}</p>
+                        <button class="btn btn-outline read-more-btn" data-id="${blog.id}">Read More</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render User Properties in Profile
+        function renderUserProperties() {
+            const container = document.getElementById('profileTabProperties');
+            if (!container) return;
+            
+            if (AppState.userProperties.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-home" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>No Properties Listed</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">You haven't listed any properties yet.</p>
+                        <button class="btn btn-primary" id="addPropertyBtn">Add Your First Property</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="properties-list">
+                        ${AppState.userProperties.map(property => `
+                            <div class="property-item">
+                                <div class="property-item-image">
+                                    <img src="${property.image}" alt="${property.title}">
+                                </div>
+                                <div class="property-item-info">
+                                    <h4>${property.title}</h4>
+                                    <div class="property-price">R${property.price.toLocaleString()}/month</div>
+                                    <div class="property-status">Status: <span style="color: ${property.status === 'Rented' ? 'var(--success)' : 'var(--text-secondary)'}">${property.status}</span></div>
+                                    ${property.tenant ? `<div class="property-tenant">Tenant: ${property.tenant}</div>` : ''}
+                                </div>
+                                <div class="property-item-actions">
+                                    <button class="btn btn-outline">Edit</button>
+                                    <button class="btn btn-secondary">Manage</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+        
+        // Render Settings Tab
+        function renderSettingsTab() {
+            const container = document.getElementById('profileTabSettings');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="settings-form">
+                    <h3>Account Settings</h3>
+                    <form id="settingsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email Notifications</label>
+                                <select>
+                                    <option>All Notifications</option>
+                                    <option>Important Only</option>
+                                    <option>None</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Language</label>
+                                <select>
+                                    <option>English</option>
+                                    <option>Afrikaans</option>
+                                    <option>Zulu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" placeholder="Enter current password">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" placeholder="New password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" placeholder="Confirm new password">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                    
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                        <h3>Danger Zone</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="btn" style="background: var(--error); color: white;">Delete Account</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Profile Tab Management
+        function setupProfileTabs() {
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('[id^="profileTab"]').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Show selected tab content
+                    document.getElementById(`profileTab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).style.display = 'block';
+                    
+                    // Update active tab
+                    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Load tab content if needed
+                    if (tabName === 'properties') {
+                        renderUserProperties();
+                    } else if (tabName === 'settings') {
+                        renderSettingsTab();
+                    }
+                });
+            });
+        }
+        
+        // Enhanced Search with Filters
+        function setupSearchFilters() {
+            const locationInput = document.getElementById('searchLocation');
+            const typeSelect = document.getElementById('searchType');
+            const priceSelect = document.getElementById('searchPrice');
+            
+            // Clear filters button
+            const clearFilters = () => {
+                locationInput.value = '';
+                typeSelect.value = '';
+                priceSelect.value = '';
+                performSearch();
+            };
+            
+            // Add clear button if not exists
+            if (!document.getElementById('clearFiltersBtn')) {
+                const searchBox = document.querySelector('.search-box');
+                const clearBtn = document.createElement('button');
+                clearBtn.id = 'clearFiltersBtn';
+                clearBtn.className = 'btn btn-outline';
+                clearBtn.innerHTML = '<i class="fas fa-times"></i> Clear Filters';
+                clearBtn.style.marginTop = '1rem';
+                clearBtn.onclick = clearFilters;
+                searchBox.appendChild(clearBtn);
+            }
+        }
+        
+        // Initialize Enhanced Features
+        function initEnhancedFeatures() {
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeModals();
+                }
+            });
+            
+            // Close modal buttons
+            document.getElementById('closePropertyModal').addEventListener('click', closeModals);
+            document.getElementById('closeBlogModal').addEventListener('click', closeModals);
+            
+            // Property booking form
+            document.getElementById('bookingForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!AppState.currentUser) {
+                    showToast('Please log in to book a viewing', 'error');
+                    navigateTo('login');
+                    closeModals();
+                    return;
+                }
+                
+                // Simulate booking process
+                showToast('Viewing request submitted successfully!', 'success');
+                closeModals();
+            });
+            
+            // Enhanced blog rendering
+            const blogGrid = document.getElementById('blogGrid');
+            if (blogGrid) {
+                blogGrid.innerHTML = AppState.extendedBlogs.map(renderBlogCard).join('');
+                
+                // Add click handlers to Read More buttons
+                document.querySelectorAll('.read-more-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const blogId = parseInt(btn.getAttribute('data-id'));
+                        openBlogModal(blogId);
+                    });
+                });
+            }
+            
+            // Add click handlers to property buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('view-details-btn') || 
+                    e.target.parentElement.classList.contains('view-details-btn')) {
+                    const btn = e.target.classList.contains('view-details-btn') ? 
+                        e.target : e.target.parentElement;
+                    const propertyId = parseInt(btn.getAttribute('data-id'));
+                    openPropertyModal(propertyId);
+                }
+                
+                if (e.target.classList.contains('book-now-btn') || 
+                    e.target.parentElement.classList.contains('book-now-btn')) {
+                    const btn = e.target.classList.contains('book-now-btn') ? 
+                        e.target : e.target.parentElement;
+                    const propertyId = parseInt(btn.getAttribute('data-id'));
+                    
+                    if (!AppState.currentUser) {
+                        showToast('Please log in to book a property', 'error');
+                        navigateTo('login');
+                        return;
+                    }
+                    
+                    openPropertyModal(propertyId);
+                }
+            });
+            
+            // Setup profile tabs
+            setupProfileTabs();
+            
+            // Enhanced search
+            setupSearchFilters();
+        }
+        
+        // Update initialization
+        function initApp() {
+            renderProperties();
+            renderFavorites();
+            renderBlogs();
+            renderFAQs();
+            updateUserInterface();
+            updateFavoritesCount();
+            initEnhancedFeatures();
+        }
+
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', initApp);
