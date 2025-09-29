@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmo City Rentals - Find Your Perfect Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #64748b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--surface);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            padding: 0 1.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-section ul {
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--background);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .badge {
+            margin-left: auto;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .copyright {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .top-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--topbar-height);
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            display: none;
+        }
+
+        .breadcrumb {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar i {
+            font-size: 2.5rem;
+            color: var(--text-secondary);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .page-container {
+            display: none;
+        }
+
+        .page-container.active {
+            display: block;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero > p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            max-width: 600px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 3rem;
+        }
+
+        .search-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-field {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--background);
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            transition: border-color 0.2s;
+        }
+
+        .search-field:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .search-field i {
+            color: var(--text-secondary);
+        }
+
+        .search-field input,
+        .search-field select {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .search-btn {
+            justify-self: stretch;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-all:hover {
+            gap: 0.75rem;
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .property-card {
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .property-image {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .property-card:hover .property-image img {
+            transform: scale(1.05);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active i {
+            color: #ef4444;
+        }
+
+        .property-info {
+            padding: 1.5rem;
+        }
+
+        .property-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .property-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .property-location {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .property-features span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .property-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .property-actions .btn {
+            flex: 1;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step p {
+            color: var(--text-secondary);
+        }
+
+        .testimonials {
+            background: var(--background);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .testimonial-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-content p {
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar i {
+            font-size: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .author-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            margin: 2rem;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-buttons .btn-outline {
+            border-color: white;
+            color: white;
+        }
+
+        .cta-buttons .btn-outline:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3,
+        .footer-section h4 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-section .social-links {
+            margin-top: 1rem;
+        }
+
+        .footer-section .social-links a {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .footer-section .social-links a:hover {
+            background: var(--primary-color);
+        }
+
+        .contact-info li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 450px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .auth-card .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Profile Page */
+        .profile-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .profile-header {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .profile-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .profile-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .profile-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        /* FAQ Page */
+        .faq-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Blog Page */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .blog-card {
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .blog-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .blog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .blog-excerpt {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Contact Page */
+        .contact-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .contact-info-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info-card h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .contact-info-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle,
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .user-info {
+                display: none;
+            }
+
+            .search-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .properties-grid,
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo" data-page="home">
+                <span class="logo-icon">🏠</span>
+                <span class="logo-text">Cosmo City Rentals</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <h3 class="nav-section-title">Main</h3>
+                <ul>
+                    <li>
+                        <a class="nav-link active" data-page="home">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="browse">
+                            <i class="fas fa-search"></i>
+                            <span>Browse Properties</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="favorites">
+                            <i class="fas fa-heart"></i>
+                            <span>Favorites</span>
+                            <span class="badge" id="favoritesCount">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3 class="nav-section-title">Account</h3>
+                <ul>
+                    <li>
+                        <a class="nav-link" data-page="login" id="loginLink">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Log In</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="signup">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Sign Up</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="profile">
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <h3 class="nav-section-title">Resources</h3>
+                <ul>
+                    <li>
+                        <a class="nav-link" data-page="blog">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Blog</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="faq">
+                            <i class="fas fa-question-circle"></i>
+                            <span>FAQ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" data-page="contact">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Us</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="copyright">&copy; 2023 Cosmo City Rentals</p>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="breadcrumb" id="breadcrumb">
+                    <span>Home</span>
+                </div>
+            </div>
+            
+            <div class="top-bar-right">
+                <div class="user-menu">
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Guest User</span>
+                            <span class="user-status" id="userStatus">Not logged in</span>
+                        </div>
+                    </div>
+                    <div class="user-actions" id="userActions">
+                        <a class="btn btn-primary" data-page="login">Log In</a>
+                        <a class="btn btn-secondary" data-page="signup">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- HOME PAGE -->
+        <div class="page-container active" id="homePage">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Find Your Perfect Home in Cosmo City</h1>
+                    <p>Discover a wide range of rental properties, from cozy bachelors to spacious family homes. Join thousands of satisfied tenants and landlords.</p>
+                    
+                    <div class="search-box">
+                        <div class="search-inputs">
+                            <div class="search-field">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="searchLocation" placeholder="Location (e.g., Cosmo City, Johannesburg)">
+                            </div>
+                            <div class="search-field">
+                                <i class="fas fa-home"></i>
+                                <select id="searchType">
+                                    <option value="">Property Type</option>
+                                    <option value="bachelor">Bachelor</option>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="house">House</option>
+                                    <option value="cottage">Cottage</option>
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <select id="searchPrice">
+                                    <option value="">Price Range</option>
+                                    <option value="0-3000">R0 - R3,000</option>
+                                    <option value="3000-6000">R3,000 - R6,000</option>
+                                    <option value="6000-10000">R6,000 - R10,000</option>
+                                    <option value="10000+">R10,000+</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary search-btn" id="searchBtn">
+                                <i class="fas fa-search"></i>
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">1,250+</span>
+                            <span class="stat-label">Properties</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">850+</span>
+                            <span class="stat-label">Happy Tenants</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">95%</span>
+                            <span class="stat-label">Satisfaction Rate</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="featured-section">
+                <div class="section-header">
+                    <h2>Featured Properties</h2>
+                    <a class="view-all" data-page="browse">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="properties-grid" id="featuredProperties"></div>
+            </section>
+
+            <section class="how-it-works">
+                <div class="section-header">
+                    <h2>How It Works</h2>
+                    <p>Renting made simple with our easy process</p>
+                </div>
+                
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>Search</h3>
+                        <p>Browse through our extensive property listings with detailed filters.</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>View</h3>
+                        <p>Schedule viewings and virtual tours of properties you're interested in.</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h3>Apply</h3>
+                        <p>Submit your application online with our streamlined process.</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h3>Move In</h3>
+                        <p>Sign your lease and move into your new home hassle-free.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="testimonials">
+                <div class="section-header">
+                    <h2>What Our Customers Say</h2>
+                    <p>Real experiences from tenants and landlords</p>
+                </div>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Cosmo City Rentals made finding my perfect apartment so easy. The process was smooth and the team was incredibly helpful!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Sarah Johnson</h4>
+                                <span>Tenant</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"As a landlord, I appreciate how efficiently Cosmo City Rentals handles tenant screening and property management. Highly recommended!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Michael Brown</h4>
+                                <span>Landlord</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"The search filters are fantastic! I found exactly what I was looking for in my budget. Moving in was a breeze with their support."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Lisa Williams</h4>
+                                <span>Tenant</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <div class="cta-content">
+                    <h2>Ready to Find Your Perfect Home?</h2>
+                    <p>Join thousands of satisfied tenants and landlords using Cosmo City Rentals</p>
+                    <div class="cta-buttons">
+                        <a class="btn btn-primary" data-page="signup">Sign Up Now</a>
+                        <a class="btn btn-outline" data-page="browse">Browse Properties</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- BROWSE PAGE -->
+        <div class="page-container" id="browsePage">
+            <section>
+                <div class="section-header">
+                    <h2>Browse All Properties</h2>
+                    <p>Find your perfect rental home</p>
+                </div>
+                <div class="properties-grid" id="allProperties"></div>
+            </section>
+        </div>
+
+        <!-- FAVORITES PAGE -->
+        <div class="page-container" id="favoritesPage">
+            <section>
+                <div class="section-header">
+                    <h2>My Favorites</h2>
+                    <p>Properties you've saved</p>
+                </div>
+                <div class="properties-grid" id="favoritesGrid"></div>
+                <div id="emptyFavorites" style="display: none; text-align: center; padding: 4rem;">
+                    <i class="fas fa-heart" style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                    <h3>No favorites yet</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Start adding properties to your favorites!</p>
+                    <a class="btn btn-primary" data-page="browse">Browse Properties</a>
+                </div>
+            </section>
+        </div>
+
+        <!-- LOGIN PAGE -->
+        <div class="page-container" id="loginPage">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>Welcome Back</h2>
+                    <p class="subtitle">Log in to your account</p>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="loginEmail" required placeholder="your@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" required placeholder="Enter your password">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary form-submit">Log In</button>
+                    </form>
+                    
+                    <div class="form-footer">
+                        Don't have an account? <a data-page="signup">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIGNUP PAGE -->
+        <div class="page-container" id="signupPage">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>Create Account</h2>
+                    <p class="subtitle">Sign up to get started</p>
+                    
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="signupName" required placeholder="John Doe">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="signupEmail" required placeholder="your@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="signupPhone" required placeholder="+27 12 345 6789">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="signupPassword" required placeholder="Create a password">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary form-submit">Sign Up</button>
+                    </form>
+                    
+                    <div class="form-footer">
+                        Already have an account? <a data-page="login">Log in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div class="page-container" id="profilePage">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileName">Guest User</h2>
+                        <p id="profileEmail">Not logged in</p>
+                    </div>
+                </div>
+                
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-tab="info">Personal Info</button>
+                    <button class="profile-tab" data-tab="properties">My Properties</button>
+                    <button class="profile-tab" data-tab="settings">Settings</button>
+                </div>
+                
+                <div class="profile-content" id="profileTabInfo">
+                    <h3>Personal Information</h3>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="profileFormName" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="profileFormEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="profileFormPhone" placeholder="+27 12 345 6789">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOG PAGE -->
+        <div class="page-container" id="blogPage">
+            <section>
+                <div class="section-header">
+                    <h2>Latest Articles</h2>
+                    <p>Tips, guides, and insights for renters and landlords</p>
+                </div>
+                <div class="blog-grid" id="blogGrid"></div>
+            </section>
+        </div>
+
+        <!-- FAQ PAGE -->
+        <div class="page-container" id="faqPage">
+            <div class="faq-container">
+                <div class="section-header">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find answers to common questions</p>
+                </div>
+                <div id="faqList"></div>
+            </div>
+        </div>
+
+        <!-- CONTACT PAGE -->
+        <div class="page-container" id="contactPage">
+            <section>
+                <div class="section-header">
+                    <h2>Contact Us</h2>
+                    <p>Get in touch with our team</p>
+                </div>
+                
+                <div class="contact-container">
+                    <div>
+                        <div class="contact-info-card">
+                            <h3><i class="fas fa-map-marker-alt"></i> Our Office</h3>
+                            <p>123 Cosmo City Boulevard<br>Johannesburg, Gauteng<br>South Africa</p>
+                        </div>
+                        
+                        <div class="contact-info-card">
+                            <h3><i class="fas fa-phone"></i> Phone</h3>
+                            <p>+27 12 345 6789<br>Mon-Fri: 8:00 AM - 6:00 PM</p>
+                        </div>
+                        
+                        <div class="contact-info-card">
+                            <h3><i class="fas fa-envelope"></i> Email</h3>
+                            <p>info@cosmocityrentals.co.za<br>support@cosmocityrentals.co.za</p>
+                        </div>
+                    </div>
+                    
+                    <div class="auth-card">
+                        <h3>Send us a Message</h3>
+                        <div id="contactAlert"></div>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <input type="text" id="contactSubject" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea id="contactMessage" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary form-submit">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cosmo City Rentals</h3>
+                    <p>Your trusted partner for finding and managing rental properties in Cosmo City and beyond.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a data-page="home">Home</a></li>
+                        <li><a data-page="browse">Browse Properties</a></li>
+                        <li><a data-page="blog">Blog</a></li>
+                        <li><a data-page="contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>For Tenants</h4>
+                    <ul>
+                        <li><a data-page="faq">FAQ</a></li>
+                        <li><a data-page="blog">Blog</a></li>
+                        <li><a data-page="browse">Browse Properties</a></li>
+                        <li><a data-page="contact">Contact Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>For Landlords</h4>
+                    <ul>
+                        <li><a data-page="contact">List Your Property</a></li>
+                        <li><a data-page="faq">Landlord FAQ</a></li>
+                        <li><a data-page="contact">Contact Us</a></li>
+                        <li><a data-page="profile">Manage Properties</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> Cosmo City, Johannesburg</li>
+                        <li><i class="fas fa-phone"></i> +27 12 345 6789</li>
+                        <li><i class="fas fa-envelope"></i> info@cosmocityrentals.co.za</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Cosmo City Rentals. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Application State
+        const AppState = {
+            currentUser: null,
+            favorites: [],
+            properties: [
+                {
+                    id: 1,
+                    title: "Modern Bachelor in Cosmo City",
+                    price: 3500,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 1,
+                    baths: 1,
+                    size: 45,
+                    type: "bachelor",
+                    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    badge: "Featured"
+                },
+                {
+                    id: 2,
+                    title: "Spacious Family House",
+                    price: 5800,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 3,
+                    baths: 2,
+                    size: 120,
+                    type: "house",
+                    image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    badge: "Popular"
+                },
+                {
+                    id: 3,
+                    title: "Cozy Garden Cottage",
+                    price: 4200,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 2,
+                    baths: 1,
+                    size: 65,
+                    type: "cottage",
+                    image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                    id: 4,
+                    title: "Luxury Apartment",
+                    price: 7500,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 2,
+                    baths: 2,
+                    size: 85,
+                    type: "apartment",
+                    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                    badge: "New"
+                },
+                {
+                    id: 5,
+                    title: "Student Accommodation",
+                    price: 2800,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 1,
+                    baths: 1,
+                    size: 35,
+                    type: "bachelor",
+                    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                    id: 6,
+                    title: "Family Townhouse",
+                    price: 6200,
+                    location: "Cosmo City, Johannesburg",
+                    beds: 3,
+                    baths: 2,
+                    size: 110,
+                    type: "house",
+                    image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                }
+            ],
+            blogs: [
+                {
+                    id: 1,
+                    title: "10 Tips for First-Time Renters",
+                    excerpt: "Essential advice for those renting their first property...",
+                    date: "2023-11-15",
+                    author: "Sarah Johnson",
+                    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                    id: 2,
+                    title: "How to Maintain Good Tenant-Landlord Relations",
+                    excerpt: "Building positive relationships for a better rental experience...",
+                    date: "2023-11-10",
+                    author: "Michael Brown",
+                    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                    id: 3,
+                    title: "Understanding Your Lease Agreement",
+                    excerpt: "Key terms and conditions every tenant should know...",
+                    date: "2023-11-05",
+                    author: "Lisa Williams",
+                    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                }
+            ],
+            faqs: [
+                {
+                    question: "How do I apply for a property?",
+                    answer: "To apply for a property, click on the 'Book Now' button on any property listing. You'll need to create an account and fill out an application form with your personal details, employment information, and references."
+                },
+                {
+                    question: "What documents do I need to rent?",
+                    answer: "Typically, you'll need: a valid ID, proof of income (3 months bank statements or payslips), proof of residence, and references from previous landlords or employers."
+                },
+                {
+                    question: "How long does the application process take?",
+                    answer: "Once you submit your application with all required documents, the approval process usually takes 2-5 business days. We'll contact you as soon as your application is reviewed."
+                },
+                {
+                    question: "Can I view a property before applying?",
+                    answer: "Absolutely! We encourage all potential tenants to view properties before applying. You can schedule a viewing by clicking 'View Details' on any property and selecting your preferred viewing time."
+                },
+                {
+                    question: "What is the deposit amount?",
+                    answer: "The deposit is typically equal to one month's rent. This amount is refundable at the end of your lease, subject to property inspection and no damages."
+                },
+                {
+                    question: "Are pets allowed?",
+                    answer: "Pet policies vary by property. Some landlords allow pets with an additional deposit, while others don't allow pets at all. Check the property details or contact us for specific pet policies."
+                }
+            ]
+        };
+
+        // Navigation System
+        function navigateTo(page) {
+            document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            const pageElement = document.getElementById(page + 'Page');
+            if (pageElement) {
+                pageElement.classList.add('active');
+                document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+                
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = `<span>${page.charAt(0).toUpperCase() + page.slice(1)}</span>`;
+                
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+                
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // Render Property Card
+        function renderPropertyCard(property) {
+            const isFavorite = AppState.favorites.includes(property.id);
+            return `
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="${property.image}" alt="${property.title}">
+                        ${property.badge ? `<div class="property-badge">${property.badge}</div>` : ''}
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${property.id}">
+                            <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="property-info">
+                        <div class="property-price">R${property.price.toLocaleString()}<span>/month</span></div>
+                        <h3 class="property-title">${property.title}</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${property.location}
+                        </div>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> ${property.beds} Bed${property.beds > 1 ? 's' : ''}</span>
+                            <span><i class="fas fa-bath"></i> ${property.baths} Bath${property.baths > 1 ? 's' : ''}</span>
+                            <span><i class="fas fa-ruler-combined"></i> ${property.size}m²</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline">View Details</button>
+                            <button class="btn btn-primary">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Properties
+        function renderProperties() {
+            const featuredGrid = document.getElementById('featuredProperties');
+            const allGrid = document.getElementById('allProperties');
+            
+            if (featuredGrid) {
+                featuredGrid.innerHTML = AppState.properties.slice(0, 3).map(renderPropertyCard).join('');
+            }
+            
+            if (allGrid) {
+                allGrid.innerHTML = AppState.properties.map(renderPropertyCard).join('');
+            }
+            
+            attachFavoriteListeners();
+        }
+
+        // Render Favorites
+        function renderFavorites() {
+            const favoritesGrid = document.getElementById('favoritesGrid');
+            const emptyFavorites = document.getElementById('emptyFavorites');
+            
+            const favoriteProperties = AppState.properties.filter(p => AppState.favorites.includes(p.id));
+            
+            if (favoriteProperties.length === 0) {
+                favoritesGrid.style.display = 'none';
+                emptyFavorites.style.display = 'block';
+            } else {
+                favoritesGrid.style.display = 'grid';
+                emptyFavorites.style.display = 'none';
+                favoritesGrid.innerHTML = favoriteProperties.map(renderPropertyCard).join('');
+                attachFavoriteListeners();
+            }
+            
+            updateFavoritesCount();
+        }
+
+        // Update Favorites Count
+        function updateFavoritesCount() {
+            const badge = document.getElementById('favoritesCount');
+            badge.textContent = AppState.favorites.length;
+        }
+
+        // Toggle Favorite
+        function toggleFavorite(propertyId) {
+            const index = AppState.favorites.indexOf(propertyId);
+            if (index > -1) {
+                AppState.favorites.splice(index, 1);
+            } else {
+                AppState.favorites.push(propertyId);
+            }
+            renderProperties();
+            renderFavorites();
+        }
+
+        // Attach Favorite Listeners
+        function attachFavoriteListeners() {
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.getAttribute('data-id'));
+                    toggleFavorite(id);
+                });
+            });
+        }
+
+        // Render Blog Posts
+        function renderBlogs() {
+            const blogGrid = document.getElementById('blogGrid');
+            if (blogGrid) {
+                blogGrid.innerHTML = AppState.blogs.map(blog => `
+                    <div class="blog-card">
+                        <div class="blog-image">
+                            <img src="${blog.image}" alt="${blog.title}">
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span><i class="fas fa-calendar"></i> ${blog.date}</span>
+                                <span><i class="fas fa-user"></i> ${blog.author}</span>
+                            </div>
+                            <h3 class="blog-title">${blog.title}</h3>
+                            <p class="blog-excerpt">${blog.excerpt}</p>
+                            <a href="#" class="btn btn-outline">Read More</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Render FAQs
+        function renderFAQs() {
+            const faqList = document.getElementById('faqList');
+            if (faqList) {
+                faqList.innerHTML = AppState.faqs.map((faq, index) => `
+                    <div class="faq-item" data-index="${index}">
+                        <div class="faq-question">
+                            <span>${faq.question}</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            ${faq.answer}
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        item.classList.toggle('active');
+                    });
+                });
+            }
+        }
+
+        // Search Functionality
+        function performSearch() {
+            const location = document.getElementById('searchLocation').value.toLowerCase();
+            const type = document.getElementById('searchType').value;
+            const priceRange = document.getElementById('searchPrice').value;
+            
+            let filtered = AppState.properties;
+            
+            if (location) {
+                filtered = filtered.filter(p => p.location.toLowerCase().includes(location));
+            }
+            
+            if (type) {
+                filtered = filtered.filter(p => p.type === type);
+            }
+            
+            if (priceRange) {
+                const [min, max] = priceRange.split('-').map(s => s.replace('+', ''));
+                filtered = filtered.filter(p => {
+                    if (max) {
+                        return p.price >= parseInt(min) && p.price <= parseInt(max);
+                    } else {
+                        return p.price >= parseInt(min);
+                    }
+                });
+            }
+            
+            const allGrid = document.getElementById('allProperties');
+            if (filtered.length > 0) {
+                allGrid.innerHTML = filtered.map(renderPropertyCard).join('');
+                attachFavoriteListeners();
+            } else {
+                allGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem;"><h3>No properties found</h3><p style="color: var(--text-secondary);">Try adjusting your search criteria</p></div>';
+            }
+            
+            navigateTo('browse');
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            AppState.currentUser = {
+                name: email.split('@')[0],
+                email: email
+            };
+            
+            updateUserInterface();
+            navigateTo('home');
+        });
+
+        // Signup Form Handler
+        document.getElementById('signupForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            
+            AppState.currentUser = {
+                name: name,
+                email: email,
+                phone: document.getElementById('signupPhone').value
+            };
+            
+            updateUserInterface();
+            navigateTo('home');
+        });
+
+        // Profile Form Handler
+        document.getElementById('profileForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (AppState.currentUser) {
+                AppState.currentUser.name = document.getElementById('profileFormName').value;
+                AppState.currentUser.email = document.getElementById('profileFormEmail').value;
+                AppState.currentUser.phone = document.getElementById('profileFormPhone').value;
+                updateUserInterface();
+                alert('Profile updated successfully!');
+            }
+        });
+
+        // Contact Form Handler
+        document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const alertDiv = document.getElementById('contactAlert');
+            alertDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Message sent successfully! We\'ll get back to you soon.</div>';
+            e.target.reset();
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 5000);
+        });
+
+        // Update User Interface
+        function updateUserInterface() {
+            const userName = document.getElementById('userName');
+            const userStatus = document.getElementById('userStatus');
+            const userActions = document.getElementById('userActions');
+            const loginLink = document.getElementById('loginLink');
+            
+            if (AppState.currentUser) {
+                userName.textContent = AppState.currentUser.name;
+                userStatus.textContent = 'Logged in';
+                userActions.innerHTML = '<button class="btn btn-secondary" id="logoutBtn">Log Out</button>';
+                
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    AppState.currentUser = null;
+                    updateUserInterface();
+                    navigateTo('home');
+                });
+                
+                document.getElementById('profileName').textContent = AppState.currentUser.name;
+                document.getElementById('profileEmail').textContent = AppState.currentUser.email;
+                document.getElementById('profileFormName').value = AppState.currentUser.name;
+                document.getElementById('profileFormEmail').value = AppState.currentUser.email;
+                document.getElementById('profileFormPhone').value = AppState.currentUser.phone || '';
+            } else {
+                userName.textContent = 'Guest User';
+                userStatus.textContent = 'Not logged in';
+                userActions.innerHTML = '<a class="btn btn-primary" data-page="login">Log In</a><a class="btn btn-secondary" data-page="signup">Sign Up</a>';
+                
+                document.querySelectorAll('[data-page]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        navigateTo(link.getAttribute('data-page'));
+                    });
+                });
+            }
+        }
+
+        // Profile Tabs
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Mobile Menu Toggle
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (window.innerWidth <= 1024) {
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Navigation Click Handlers
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                navigateTo(page);
+            });
+        });
+
+        // Search Button
+        document.getElementById('searchBtn').addEventListener('click', performSearch);
+
+        // Enter key on search fields
+        ['searchLocation', 'searchType', 'searchPrice'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+
+        // Initialize Application
+        function initApp() {
+            renderProperties();
+            renderFavorites();
+            renderBlogs();
+            renderFAQs();
+            updateUserInterface();
+            updateFavoritesCount();
+        }
+
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
